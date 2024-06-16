@@ -2,7 +2,7 @@
 name = "eip712-structs"
 version = "1.2.0"
 authors = [{ name = "Mihai Cosma", email = "mcosma@gmail.com" }]
-requires-python = ">= 3.7"
+requires-python = ">= 3.10"
 dependencies = ["eth-utils"]
 description = "A python library for EIP712 objects"
 keywords = ["ethereum", "eip712", "solidity"]
