@@ -1,7 +1,6 @@
 services:
   anvil:
     image: "ghcr.io/foundry-rs/foundry:latest"
-    # command: "--account=\"0x3660582119566511de16f4dcf397fa324b27bd6247f653cf0298a0993f3432ed,100000000000000000000\""
     command: "'anvil --host 0.0.0.0 --port=11111'"
     ports:
       - "11111:11111"
@@ -9,8 +8,7 @@ services:
       - compiler
     labels:
       net.consensys.description: >
-        Starts an instance of anvil for chain parity tests.
-        Unlocks address 0xD68D840e1e971750E6d45049ff579925456d5893"
+        Starts an instance of anvil on port 11111 for chain parity tests.
 
   compiler:
     image: "ethereum/solc:stable"

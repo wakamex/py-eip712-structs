@@ -9,7 +9,7 @@ Read the proposal:<br/>
 https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md
 
 #### Supported Python Versions
-- `3.12`
+- 3.10 and up, tested up to 3.12
 
 ## Usage
 
@@ -222,10 +222,12 @@ Deploying a new version:
 - Switch from ganache to anvil
 - Remove pysha3 dependency
 - Remove python2 style super() call
-- Remove OrderedAttributesMeta since from version 3.7 onward, dictionaries maintain the insertion order of their items
-- Switch from Sphinx to Google docstring format
-- Remove default_domain since it was set to None
-- Disallow EIP712Type in get_members since it's not callable
+- Remove OrderedAttributesMeta. From version 3.7 onward, dictionaries maintain the insertion order of their items.
+- Require python >= 3.10 as the lowest version to install with [uv](https://github.com/astral-sh/uv)
+- Switch from Sphinx to Google docstring format for readability
+- Lint with [ruff](https://github.com/astral-sh/ruff)
+- Add Github workflows (lint and test)
+- Add pyproject.toml
 
 ## Shameless Plug
 Written by [ConsenSys](https://consensys.net) for the world! :heart:
