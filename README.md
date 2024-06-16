@@ -9,16 +9,25 @@ Read the proposal:<br/>
 https://github.com/ethereum/EIPs/blob/master/EIPS/eip-712.md
 
 #### Supported Python Versions
-- `3.6`
-- `3.7`
-
-## Install
-```bash
-pip install eip712-structs
-```
+- 3.10 and up, tested up to 3.12
 
 ## Usage
-See [API.md](API.md) for a succinct summary of available methods.
+
+### `class EIP712Struct`
+#### Important methods
+- `.to_message(domain: EIP712Struct)` - Convert the struct (and given domain struct) into the standard EIP-712 message structure.
+- `.signable_bytes(domain: EIP712Struct)` - Get the standard EIP-712 bytes hash, suitable for signing.
+- `.from_message(message_dict: dict)` **(Class method)** - Given a standard EIP-712 message dictionary (such as produced from `.to_message`), returns a NamedTuple containing the `message` and `domain` EIP712Structs.
+
+#### Other stuff
+- `.encode_value()` - Returns a `bytes` object containing the ordered concatenation of each members bytes32 representation.
+- `.encode_type()` **(Class method)** - Gets the "signature" of the struct class. Includes nested structs too!
+- `.type_hash()` **(Class method)** - The keccak256 hash of the result of `.encode_type()`.
+- `.hash_struct()` - Gets the keccak256 hash of the concatenation of `.type_hash()` and `.encode_value()`
+- `.get_data_value(member_name: str)` - Get the value of the given struct member
+- `.set_data_value(member_name: str, value: Any)` - Set the value of the given struct member
+- `.data_dict()` - Returns a dictionary with all data in this struct. Includes nested struct data, if exists.
+- `.get_members()` **(Class method)** - Returns a dictionary mapping each data member's name to it's type.
 
 Examples/Details below.
 
@@ -193,12 +202,12 @@ struct_array = Array(MyStruct, 10)   # MyStruct[10] - again, don't instantiate s
 ## Development
 Contributions always welcome.
 
-Install dependencies:
-- `pip install -r requirements.txt`
+Install test dependencies:
+- `uv pip install -e ".[test]"`
 
 Run tests:
-- `python setup.py test`
-- Some tests expect an active local ganache chain on http://localhost:8545. Docker will compile the contracts and start the chain for you.
+- `pytest`
+- Some tests expect an active local anvil chain on http://localhost:11111. Docker will compile the contracts and start the chain for you.
 - Docker is optional, but useful to test the whole suite. If no chain is detected, chain tests are skipped.
 - Usage:
     - `docker-compose up -d` (Starts containers in the background)
@@ -206,9 +215,19 @@ Run tests:
     - Cleanup containers when you're done: `docker-compose down`
 
 Deploying a new version:
-- Bump the version number in `setup.py`, commit it into master.
+- Bump the version number in `pyproject.toml`, commit it into master.
 - Make a release tag on the master branch in Github. Travis should handle the rest.
 
+### Changes in 1.2
+- Switch from ganache to anvil
+- Remove pysha3 dependency
+- Remove python2 style super() call
+- Remove OrderedAttributesMeta. From version 3.7 onward, dictionaries maintain the insertion order of their items.
+- Require python >= 3.10 as the lowest version to install with [uv](https://github.com/astral-sh/uv)
+- Switch from Sphinx to Google docstring format for readability
+- Lint with [ruff](https://github.com/astral-sh/ruff)
+- Add Github workflows (lint and test)
+- Add pyproject.toml
 
 ## Shameless Plug
 Written by [ConsenSys](https://consensys.net) for the world! :heart:

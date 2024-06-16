@@ -6,3 +6,5 @@ build/
 .coverage
 
 tests/contracts/build
+__pycache__
+.vscode

@@ -1,10 +1,29 @@
+"""Test domain separator."""
+
 import os
 
 import pytest
 from eth_utils.crypto import keccak
 
 import eip712_structs
-from eip712_structs import make_domain, EIP712Struct, String
+from eip712_structs import EIP712Struct, String, make_domain
+
+# allow lots of function arguments
+# ruff: noqa: PLR0913
+# pylint: disable=too-many-arguments
+# allow lots of local variables
+# pylint: disable=too-many-locals
+# allow redefining outer name for fixtures
+# pylint: disable=redefined-outer-name
+# allow classes without docstrings
+# ruff: noqa: D101
+# pylint: disable=missing-class-docstring
+# allow functions without docstrings
+# pylint: disable=missing-function-docstring
+# allow classes with no methods
+# pylint: disable=too-few-public-methods
+# allow unused arguments
+# pylint: disable=unused-argument
 
 
 @pytest.fixture
@@ -18,15 +37,15 @@ def default_domain_manager():
 
 def test_domain_sep_create():
     salt = os.urandom(32)
-    domain_struct = make_domain(name='name', salt=salt)
+    domain_struct = make_domain(name="name", salt=salt)
 
-    expected_result = 'EIP712Domain(string name,bytes32 salt)'
+    expected_result = "EIP712Domain(string name,bytes32 salt)"
     assert domain_struct.encode_type() == expected_result
 
-    expected_data = b''.join([keccak(text='name'), salt])
+    expected_data = b"".join([keccak(text="name"), salt])
     assert domain_struct.encode_value() == expected_data
 
-    with pytest.raises(ValueError, match='At least one argument must be given'):
+    with pytest.raises(ValueError, match="At least one argument must be given"):
         make_domain()
 
 
@@ -34,16 +53,20 @@ def test_domain_sep_types():
     salt = os.urandom(32)
     contract = os.urandom(20)
 
-    domain_struct = make_domain(name='name', version='version', chainId=1,
-                                verifyingContract=contract, salt=salt)
+    domain_struct = make_domain(name="name", version="version", chainId=1, verifyingContract=contract, salt=salt)
 
-    encoded_data = [keccak(text='name'), keccak(text='version'), int(1).to_bytes(32, 'big', signed=False),
-                    bytes(12) + contract, salt]
+    encoded_data = [
+        keccak(text="name"),
+        keccak(text="version"),
+        int(1).to_bytes(32, "big", signed=False),
+        bytes(12) + contract,
+        salt,
+    ]
 
-    expected_result = 'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)'
+    expected_result = "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract,bytes32 salt)"
     assert domain_struct.encode_type() == expected_result
 
-    expected_data = b''.join(encoded_data)
+    expected_data = b"".join(encoded_data)
     assert domain_struct.encode_value() == expected_data
 
 
@@ -52,15 +75,16 @@ def test_default_domain(default_domain_manager):
 
     class Foo(EIP712Struct):
         s = String()
-    foo = Foo(s='hello world')
 
-    domain = make_domain(name='domain')
-    other_domain = make_domain(name='other domain')
+    foo = Foo(s="hello world")
+
+    domain = make_domain(name="domain")
+    other_domain = make_domain(name="other domain")
 
     # When neither methods provide a domain, expect a ValueError
-    with pytest.raises(ValueError, match='Domain must be provided'):
+    with pytest.raises(ValueError, match="Domain must be provided"):
         foo.to_message()
-    with pytest.raises(ValueError, match='Domain must be provided'):
+    with pytest.raises(ValueError, match="Domain must be provided"):
         foo.signable_bytes()
 
     # But we can still provide a domain explicitly
